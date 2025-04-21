@@ -1,0 +1,105 @@
+module Matrix where
+
+open import Agda.Builtin.Nat using (Nat; suc; zero; _+_; _*_)
+open import Data.Vec using (Vec; []; _∷_)
+open import Agda.Builtin.Equality 
+
+data Int : Set where
+  pos  : Nat → Int
+  neg : Nat → Int
+
+-- Given i, return i + 1
+isuc : Int → Int
+-- i + 1 = + (n + 1)
+isuc (pos n) = pos (Nat.suc n)
+-- i + 1 = - 0 + 1 = + 1 
+isuc (neg zero) = pos (Nat.suc zero)
+-- i + 1 = - (n + 1) + 1 = - n - 1 + 1 = - n
+isuc (neg (Nat.suc n)) = neg n
+
+-- Given i, return i - 1
+ipred : Int → Int
+-- i - 1 = + 0 - 1 = - 1
+ipred (pos zero) = neg (Nat.suc zero)
+-- i - 1 = + (x + 1) - 1 = + x
+ipred (pos (Nat.suc x)) = pos x
+-- i - 1 = - x - 1 = - (x + 1)
+ipred (neg x) = neg (Nat.suc x)
+
+-- Given i, return -i
+ineg : Int → Int
+-- - i = - (+ x) = - x
+ineg (pos x) = neg x
+-- - i = - (- x) = + x 
+ineg (neg x) = pos x
+
+-- Given i & j, return i + j
+iplus : Int → Int → Int
+iplus (pos zero) n = n
+iplus (neg zero) n = n 
+iplus (pos (Nat.suc m)) n = isuc (iplus (pos m) n)
+iplus (neg (Nat.suc m)) n = ipred (iplus (neg m) n) 
+
+-- Given i & j, return i - j
+iminus : Int → Int → Int
+iminus m n = iplus m (ineg n)
+
+-- Given i & j, return i * j
+itimes : Int → Int → Int
+itimes (pos m) (pos n) = pos (m * n)
+itimes (pos m) (neg n) = neg (m * n)
+itimes (neg m) (pos n) = neg (m * n)
+itimes (neg m) (neg n) = pos (m * n)
+
+-- Matrix Def
+Mat : Set → Nat → Nat → Set
+Mat A m n = Vec (Vec A m) n
+
+-- Helper for mat-plus
+vec-plus : {n : Nat} → Vec Int n → Vec Int n → Vec Int n  
+vec-plus [] _ = []
+vec-plus (x ∷ xs) (y ∷ ys) = (iplus x y) ∷ (vec-plus xs ys)
+
+-- Helper for mat-minus
+vec-minus : {n : Nat} → Vec Int n → Vec Int n → Vec Int n  
+vec-minus [] _ = []
+vec-minus (x ∷ xs) (y ∷ ys) = (iminus x y) ∷ (vec-minus xs ys)
+
+vec-map : {n : Nat} → {A B : Set} → (f : A → B) → Vec A n → Vec B n
+vec-map f [] = []
+vec-map f (x ∷ xs) = (f x) ∷ (vec-map f xs)
+
+mat-map : {m n : Nat} → {A B : Set} → (f : A → B) → Mat A m n → Mat B m n
+mat-map f [] = []
+mat-map f (r ∷ rs) = vec-map f r ∷ mat-map f rs
+
+-- Must be same size
+mat-plus : {m n : Nat} → Mat Int m n → Mat Int m n → Mat Int m n  
+mat-plus [] _ = [] -- Other list is constrained to empty
+mat-plus (r1 ∷ rs1) (r2 ∷ rs2) = vec-plus r1 r2 ∷ mat-plus rs1 rs2
+
+-- Must be same size
+mat-minus : {m n : Nat} → Mat Int m n → Mat Int m n → Mat Int m n
+mat-minus [] _ = []
+mat-minus (r1 ∷ rs1) (r2 ∷ rs2) = (vec-minus r1 r2) ∷ (mat-minus rs1 rs2)
+
+vec-times : {n : Nat} → (k : Int) → Vec Int n → Vec Int n  
+vec-times k [] = []
+vec-times k (x ∷ xs) = (itimes k x) ∷ (vec-times k xs)
+
+mat-scalar : {m n : Nat} → (k : Int) → Mat Int m n → Mat Int m n  
+mat-scalar k [] = []
+mat-scalar k (r ∷ rs) = (vec-times k r) ∷ (mat-scalar k rs)
+
+mat-transpose : {m n : Nat} → Mat Int (suc m) (suc n) → Mat Int (suc n) (suc m)
+mat-transpose ((x ∷ r) ∷ rs) = (x ∷ {!   !}) ∷ {!   !}
+
+-- We only have rows here -> Perhaps calculate the matrix transpose in order to multiply rows by cols then add 
+mat-mult : {m r n : Nat} → Mat Int (suc m) (suc r) → Mat Int (suc r) (suc n) → Mat Int (suc m) (suc n)
+mat-mult (r1 ∷ rs1) (r2 ∷ rs2) = {! !} ∷ {!   !}
+
+vec-plus-comm : {m n : Nat} → (A B : Vec Int n) → vec-plus A B ≡ vec-plus B A
+vec-plus-comm [] [] = refl
+vec-plus-comm (x ∷ xs) (y ∷ ys) = {!   !}
+ 
+            
