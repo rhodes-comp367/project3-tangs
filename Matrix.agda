@@ -4,6 +4,10 @@ open import Agda.Builtin.Nat using (Nat; suc; zero; _+_; _*_)
 open import Data.Vec using (Vec; []; _∷_)
 open import Agda.Builtin.Equality 
 
+data Fin : Nat → Set where 
+  fzero : {n : Nat} → Fin (suc n)
+  fsuc : {n : Nat} → Fin n → Fin (suc n)
+
 data Int : Set where
   pos  : Nat → Int
   neg : Nat → Int
@@ -102,3 +106,28 @@ mat-scalar k (r ∷ rs) = (vec-times k r) ∷ (mat-scalar k rs)
 vec-dot : {n : Nat} → Vec Int n → Vec Int n → Int
 vec-dot [] _ = pos zero
 vec-dot (x ∷ xs) (y ∷ ys) = iplus (itimes x y) (vec-dot xs ys) 
+
+vec-lookup : {n : Nat} → Fin n → Vec Int n → Int 
+vec-lookup fzero (x ∷ _) = x
+vec-lookup (fsuc k) (_ ∷ xs) = vec-lookup k xs
+
+mat-lookup : {i j : Nat} → Fin i → Fin j → Mat Int i j → Int
+mat-lookup fzero j (r ∷ rs) = vec-lookup j r
+mat-lookup (fsuc i) j (r ∷ rs) = mat-lookup i j rs
+
+replicate : {A : Set} → A → (n : Nat) → Vec A n
+replicate x zero = []
+replicate x (suc n) = x ∷ (replicate x n)
+
+-- Append an element to the end of a vector
+snoc : {A : Set} → {n : Nat} → Vec A n → A → Vec A (suc n)
+snoc [] x = x ∷ [] 
+snoc (x ∷ xs) y = x ∷ (snoc xs y) -- Recursively iterate to smaller lists till the nil/end of vector and add
+
+cons-col : {A : Set} → {m n : Nat} → Vec A m → Mat A m n → Mat A m (suc n)
+cons-col [] m = []
+cons-col (x ∷ xs) (r ∷ rs) = (snoc r x) ∷ (cons-col xs rs)
+
+mat-transpose : {m n : Nat} → Mat Int m n → Mat Int n m
+mat-transpose {n = n} [] = replicate [] n
+mat-transpose (r ∷ rs) = cons-col r (mat-transpose rs)
