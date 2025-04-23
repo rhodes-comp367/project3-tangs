@@ -53,7 +53,15 @@ itimes (neg m) (neg n) = pos (m * n)
 
 -- Matrix Def
 Mat : Set → Nat → Nat → Set
-Mat A m n = Vec (Vec A m) n
+Mat A m n = Vec (Vec A n) m
+
+suc-vec : (n : Nat) → Vec Int n 
+suc-vec zero = []
+suc-vec (suc n) = (pos (suc n)) ∷ (suc-vec n)
+
+suc-mat : (m n : Nat) → Vec (Vec Int n) m 
+suc-mat zero n = [] 
+suc-mat (suc m) n = suc-vec n ∷ suc-mat m n
 
 -- Helper for mat-plus
 vec-plus : {n : Nat} → Vec Int n → Vec Int n → Vec Int n  
@@ -91,15 +99,6 @@ mat-scalar : {m n : Nat} → (k : Int) → Mat Int m n → Mat Int m n
 mat-scalar k [] = []
 mat-scalar k (r ∷ rs) = (vec-times k r) ∷ (mat-scalar k rs)
 
-mat-transpose : {m n : Nat} → Mat Int (suc m) (suc n) → Mat Int (suc n) (suc m)
-mat-transpose ((x ∷ r) ∷ rs) = (x ∷ {!   !}) ∷ {!   !}
-
--- We only have rows here -> Perhaps calculate the matrix transpose in order to multiply rows by cols then add 
-mat-mult : {m r n : Nat} → Mat Int (suc m) (suc r) → Mat Int (suc r) (suc n) → Mat Int (suc m) (suc n)
-mat-mult (r1 ∷ rs1) (r2 ∷ rs2) = {! !} ∷ {!   !}
-
-vec-plus-comm : {m n : Nat} → (A B : Vec Int n) → vec-plus A B ≡ vec-plus B A
-vec-plus-comm [] [] = refl
-vec-plus-comm (x ∷ xs) (y ∷ ys) = {!   !}
- 
-            
+vec-dot : {n : Nat} → Vec Int n → Vec Int n → Int
+vec-dot [] _ = pos zero
+vec-dot (x ∷ xs) (y ∷ ys) = iplus (itimes x y) (vec-dot xs ys) 
