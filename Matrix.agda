@@ -157,7 +157,8 @@ delete-col f A = mat-transpose (vec-delete f (mat-transpose A))
 submatrix : {n : Nat} → Fin (suc n) → Mat Int (suc n) (suc n) → Mat Int n n
 submatrix j a = vec-delete fzero (delete-col j a)
 
--- Find determinant of matrix by cofactor expansion along the first row for n > 3
+-- Find determinant of matrix by cofactor expansion along the first row for n >= 3
+-- To get the determinant, Fin j has to be Fin n (e.g., fmax (n - 1)) because the indices start at 0
 det : {n j : Nat} → Fin j → Mat Int n n → Int
 det _ [] = pos 1
 det {suc zero} _ ((x ∷ []) ∷ []) = x
