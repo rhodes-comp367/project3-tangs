@@ -157,11 +157,10 @@ delete-col f A = mat-transpose (vec-delete f (mat-transpose A))
 submatrix : {n : Nat} → Fin (suc n) → Mat Int (suc n) (suc n) → Mat Int n n
 submatrix j a = vec-delete fzero (delete-col j a)
 
--- Find determinant of matrix by cofactor expansion along the first row for n >= 3
+-- Find determinant of matrix by cofactor expansion along the first row for n >= 2
 -- To get the determinant, Fin j has to be Fin n (e.g., fmax (n - 1)) because the indices start at 0
 det : {n j : Nat} → Fin j → Mat Int n n → Int
 det _ [] = pos 1
 det {suc zero} _ ((x ∷ []) ∷ []) = x
-det {suc (suc zero)} _ ((a ∷ b ∷ []) ∷ (c ∷ d ∷ []) ∷ []) = iminus (itimes a d) (itimes b c)
-det {suc (suc (suc n))} {j} fzero ((x ∷ r) ∷ rs) = itimes (sign 0 0) (itimes x (det {suc (suc n)} {j} fzero (submatrix fzero ((x ∷ r) ∷ rs))))
-det {suc (suc (suc n))} (fsuc k) ((x ∷ r) ∷ rs) = iplus (itimes ((sign 0 (to-nat (fsuc k)))) (itimes (vec-lookup (to-fin (to-nat (fsuc k)) (suc (suc n))) (x ∷ r)) (det {suc (suc n)} k (submatrix (to-fin (to-nat (fsuc k)) (suc (suc n))) ((x ∷ r) ∷ rs))))) (det k (((x ∷ r) ∷ rs)))
+det {suc (suc n)} {j} fzero ((x ∷ r) ∷ rs) = itimes (sign 0 0) (itimes x (det (fmax n) (submatrix fzero ((x ∷ r) ∷ rs))))
+det {suc (suc n)} (fsuc k) ((x ∷ r) ∷ rs) = iplus (itimes ((sign 0 (to-nat (fsuc k)))) (itimes (vec-lookup (to-fin (to-nat (fsuc k)) (suc n)) (x ∷ r)) (det (fmax n) (submatrix (to-fin (to-nat (fsuc k)) (suc n)) ((x ∷ r) ∷ rs))))) (det k (((x ∷ r) ∷ rs)))
