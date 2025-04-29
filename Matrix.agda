@@ -117,4 +117,4 @@ trans-mult (a ∷ as) b = row-mult a b ∷ trans-mult as b
 -- each column of the second matrix by each row of the first matrix
 -- because the rows of our defined matrix are more easily accessible
 mat-mult : {m n r : Nat} → Mat Int m r → Mat Int r n → Mat Int m n
-mat-mult a b = trans-mult a (mat-transpose b) 
+mat-mult a b = trans-mult a (mat-transpose b)
