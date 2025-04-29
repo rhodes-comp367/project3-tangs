@@ -4,8 +4,7 @@
 **Explain the general theme and specific features of your project.**
 The general theme is matrix operations. This involves defining a matrix in terms of
 m vectors of n vectors. We defined matrix additions/subtractions and scalar multiplication, and 
-then proved properties for addition and scalar multiplications. We also defined matrix multiplication, which is nice in Agda since it affords us to be able to limit the parameters to only allow mult between mxr and rxn matrices, in other words, matrices with a shared dimension. To implement this, we had to be creative.
-Since case splitting vectors of vectors would expose only the rows, but we needed rows of A
+then proved properties for addition and scalar multiplications for natural numbers (see Matrix-Nat.agda). We also defined matrix multiplication, which is nice in Agda since it affords us to be able to limit the parameters to only allow mult between mxr and rxn matrices, in other words, matrices with a shared dimension. To implement this, we had to be creative. Since case splitting vectors of vectors would expose only the rows, but we needed rows of A
 and cols of B. We implemented matrix transpose to make the cols of B the rows. We then used the
 vector dot product definition of the elements to build the final matrix. Lastly, we defined 
 finding the determinant of a matrix. 
