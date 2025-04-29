@@ -41,18 +41,22 @@ mat-map : {m n : Nat} → {A B : Set} → (f : A → B) → Mat A m n → Mat B 
 mat-map f [] = []
 mat-map f (r ∷ rs) = vec-map f r ∷ mat-map f rs
 
+-- Find entry at index k in the vector
 vec-lookup : {n : Nat} → Fin n → Vec Int n → Int 
 vec-lookup fzero (x ∷ _) = x
 vec-lookup (fsuc k) (_ ∷ xs) = vec-lookup k xs
 
+-- Find entry at row i and column j in the matrix
 mat-lookup : {i j : Nat} → Fin i → Fin j → Mat Int i j → Int
 mat-lookup fzero j (r ∷ rs) = vec-lookup j r
 mat-lookup (fsuc i) j (r ∷ rs) = mat-lookup i j rs
 
+-- Replace entry at index k in the vector
 vec-replace : {A : Set} → {n : Nat} → Vec A n → Fin n → A → Vec A n
 vec-replace (_ ∷ xs) fzero e  = e ∷ xs
 vec-replace (x ∷ xs) (fsuc k) e = x ∷ vec-replace xs k e 
 
+-- Replace entry at row i and column j in the matrix
 mat-replace : {A : Set} → {i j : Nat} → Mat A i j → Fin i → Fin j → A → Mat A i j
 mat-replace (r ∷ rs) fzero j e = (vec-replace r j e) ∷ rs
 mat-replace (r ∷ rs) (fsuc i) j e = r ∷ mat-replace rs i j e
